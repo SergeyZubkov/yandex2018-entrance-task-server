@@ -1,22 +1,66 @@
-const { models } = require('../../models');
+// const { models } = require('../../models');
+const { Op } = require("sequelize");
 
 module.exports = {
-event (root, { id }) {
-    return models.Event.findById(id);
+  async event (obj, {id}, {models}, info) {
+
+    return models.Event.findOne({
+      where: {
+        id
+      }
+    });
   },
-  events (root, args, context) {
-    return models.Event.findAll(argumets, context);
+  async events (obj, args, {models}, info) {
+    return models.Event.findAll();
   },
-user (root, { id }) {
-    return models.User.findById(id);
+  async eventsOnDate (obj, {date}, {models}, info) {
+    const dayStart = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+    )
+    const dayEnd = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      24
+    )
+    const events = models.Event.findAll({
+      where: {
+        dateStart: {
+          [Op.between]: [dayStart, dayEnd]
+        }
+      }
+    });
+
+    console.log(events)
+    return models.Event.findAll({
+      where: {
+        dateStart: {
+          [Op.between]: [dayStart, dayEnd]
+        }
+      }
+    });
   },
-  users (root, args, context) {
-    return models.User.findAll({}, context);
+  async user (obj, {id}, {models}, info) {
+    console.log(models)
+    return models.User.findOne({
+      where: {
+        id
+      }
+    })
   },
-room (root, { id }) {
-    return models.Room.findById(id);
+  async users (obj, args, {models}, info) {
+    return models.User.findAll();
   },
-  rooms (root, args, context) {
-    return models.Room.findAll({ offset: 1 }, context);
+  async room (obj, {id}, {models}, info) {
+    return models.Room.findOne({
+      where: {
+        id
+      }
+    });
+  },
+  async rooms (obj, args, {models}, info) {
+    return models.Room.findAll();
   }
 };

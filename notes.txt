@@ -1,0 +1,54 @@
+1)	/pages/controller.js - в отсылаемом html нет тега body, который требуется по спецификации 
+		и не указан тип html документа(<DOCTYPE html />), чтобы браузер правильно обработал данный документ.
+
+2)	/qraphql/routes - не указанны dbname, user, password при инициалиации Sequalize
+
+3)	index.js - опечатка в указании маршрута - вместо /graphgl надо /graphql
+
+4)	create-mock-data - для теста кода работающего с данными, хорошо бы сначала создать фиктивные данные, если 
+		данных в БД нет.
+
+5)	/graphql/resolvers/query - ошибка в запросе users - в models.Event.findAll передаем переменную arguments, 
+		которая не определена(undefined). Вообще нам надо получить коллекцию всех событий, для этого нужно вызвать
+		findAll без аргументов. Аргумент нужно передавать тогда, когда мы хотим получить определенный набор записей
+		из коллекции. А еще лучше вместо findAll использовать метод all, для краткости.
+
+6)	/graphql/resolvers/index - при запросах, сделанные с помощью graphql, модель event не наполнялась внутренними 
+		данными: поля room и users были null. Нужно было добавить return в методы resolver'а
+
+7) /graphql/resolvers/query метод rooms - не нужен offset. Метода должен возвращать все имееющиеся модели. offset	
+		нужен при пагинации.
+
+7) /graphql/resolvers/mutation - пропущен метод addUserToEvent
+
+8) /graphql/resolvers/mutation - забыт return в changeEventRoom из-за чего после обновления не возвращается id event'а.
+
+refactor
+10) мне кажется, что структуру папок и файлов можно улучшить 
+		
+		client
+			public
+		server
+			data
+				graphql
+					resolvers
+					typeDefs.js
+					index.js ---> graphqlHTTP(schema, ..)
+				models
+					index.js
+					user
+					event
+					room
+			routes
+				home
+				graphql
+			index.js
+			create-moack-data.js
+
+11) поскольку в проекте уже установлен линтер, который нужен для придания коду единообразного стиля, что повышает читаемость кода,
+		то не лишнем будет им воспользоваться.
+
+12) /graphql/resolvers/mutation метод updateRoom - коллбек в then можно записать в одну строку.
+
+
+2:15

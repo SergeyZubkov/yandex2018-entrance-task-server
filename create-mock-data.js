@@ -73,9 +73,9 @@ function createData () {
 
   Promise.all([usersPromise, roomsPromise, eventsPromise])
     .then(() => Promise.all([
-      models.User.findAll(),
-      models.Room.findAll(),
-      models.Event.findAll()
+      models.User.all(),
+      models.Room.all(),
+      models.Event.all()
     ]))
     .then(function ([users, rooms, events]) {
       let promises = [];
@@ -92,4 +92,6 @@ function createData () {
 }
 
 sequelize.sync()
-  .then(createData);
+.then(createData);
+
+module.exports = createData;

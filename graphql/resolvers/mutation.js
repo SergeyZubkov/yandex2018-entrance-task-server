@@ -8,9 +8,7 @@ module.exports = {
 
   updateUser (root, { id, input }, context) {
     return models.User.findById(id)
-            .then(user => {
-              return user.update(input);
-            });
+            .then(user => user.update(input));
   },
 
   removeUser (root, { id }, context) {
@@ -25,9 +23,7 @@ module.exports = {
 
   updateRoom (root, { id, input }, context) {
     return models.Room.findById(id)
-            .then(room => {
-              return room.update(input);
-            });
+            .then(room => room.update(input));
   },
 
   removeRoom (root, { id }, context) {
@@ -36,27 +32,55 @@ module.exports = {
   },
 
   // Event
-  createEvent (root, { input, usersIds, roomId }, context) {
+  async createEvent (root, { input, usersIds, roomId }, context) {
     return models.Event.create(input)
-            .then(event => {
-              event.setRoom(roomId);
+      .then(event => {
+        event.setRoom(roomId)
+        event.setUsers(usersIds)
+        
+        return event.dataValues.id
+      })
+      .then(eventId => {
+        const event = models.Event.findOne({
+                  where: {
+                    id: eventId
+                  }
+                });
 
-              return event.setUsers(usersIds)
-                    .then(() => event);
-            });
+        console.log(event)
+
+        return event
+      })
   },
 
-  updateEvent (root, { id, input }, context) {
-    return models.Event.findById(id)
-            .then(event => {
-              return event.update(input);
-            });
+  async updateEvent (root, { id, input }, context) {
+    return models.Event.update(input, {
+      where: {
+        id
+      }
+    })
+    .then(() => {
+      return models.Event.findOne({
+        where: {
+          id
+        }
+      })
+    })
   },
 
   removeUserFromEvent (root, { id, userId }, context) {
     return models.Event.findById(id)
             .then(event => {
               event.removeUser(userId);
+
+              return event;
+            });
+  },
+
+  addUserToEvent (root, {id, userId}, context) {
+    return models.Event.findById(id)
+            .then(event => {
+              event.addUser(userId);
               return event;
             });
   },
@@ -65,6 +89,7 @@ module.exports = {
     return models.Event.findById(id)
             .then(event => {
               event.setRoom(id);
+              return event;
             });
   },
 

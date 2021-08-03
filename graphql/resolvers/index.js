@@ -3,21 +3,19 @@ const GraphQLDate = require('graphql-date');
 const query = require('./query');
 const mutation = require('./mutation');
 
-module.exports = function resolvers () {
-  return {
+module.exports = {
     Query: query,
 
     Mutation: mutation,
 
     Event: {
       users (event) {
-        event.getUsers();
+        return event.getUsers();
       },
       room (event) {
-        event.getRoom();
+        return event.getRoom();
       }
     },
 
     Date: GraphQLDate
-  };
-};
+}

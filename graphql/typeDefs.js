@@ -1,4 +1,7 @@
-module.exports = `
+
+const { gql } = require('apollo-server-express');
+
+module.exports = gql`
 scalar Date
 
 type User {
@@ -51,6 +54,7 @@ type Query {
   users: [User]
   event(id: ID!): Event
   events: [Event]
+  eventsOnDate(date: Date!): [Event]
   room(id: ID!): Room
   rooms: [Room]
 }
@@ -71,6 +75,7 @@ type Mutation {
   changeEventRoom(id: ID!, roomId: ID!): Event
   removeEvent(id: ID!): Event
 }
+
 
 union SearchResult = User | Event | Room
 
